@@ -1,10 +1,18 @@
 import com.github.javafaker.Faker;
+import config.SpringConfig;
 import dto.Pet;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import services.PetNewApi;
 
 import static org.hamcrest.Matchers.equalTo;
 
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {SpringConfig.class})
 public class PetCreateTest {
 
     /*
@@ -12,8 +20,12 @@ public class PetCreateTest {
          проверить: статус 200ок, отправленные данные корректно создаются.
     */
 
+    @Autowired
+    private PetNewApi petNewApi;
+
     @Test
     public void petUpdateSomeParametres(){
+
         //создаем питомца
         Faker faker = new Faker();
         String randomNameBeforeUpdate = faker.name().firstName();
@@ -24,12 +36,10 @@ public class PetCreateTest {
                 .status("available")
                 .build();
 
-        PetNewApi petApi = new PetNewApi();
-
-        petApi.createPet(pet);
+        petNewApi.createPet(pet);
 
         //проверяем данные
-        petApi.getPetId("165")
+        petNewApi.getPetId("165")
                 .statusCode(200)
                 .body("id", equalTo(165))
                 .body("name", equalTo(randomNameBeforeUpdate))
@@ -43,10 +53,10 @@ public class PetCreateTest {
                 .status("available")
                 .build();
 
-        petApi.createPet(pet2);
+        petNewApi.createPet(pet2);
 
         //проверяем обновление данных
-        petApi.getPetId("165")
+        petNewApi.getPetId("165")
                 .statusCode(200)
                 .body("id", equalTo(165))
                 .body("name", equalTo(randomNameAfterUpdate))
@@ -65,9 +75,7 @@ public class PetCreateTest {
                 .id(165)
                 .build();
 
-        PetNewApi petApi = new PetNewApi();
-
-        petApi.createPet(pet)
+        petNewApi.createPet(pet)
                 .statusCode(200)
                 .body("id", equalTo(165))
                 .body("name", equalTo(null))
@@ -79,10 +87,10 @@ public class PetCreateTest {
                 .id(200)
                 .build();
 
-        petApi.createPet(pet2);
+        petNewApi.createPet(pet2);
 
         //проверяем обновление данных
-        petApi.getPetId("200")
+        petNewApi.getPetId("200")
                 .statusCode(200)
                 .body("id", equalTo(200))
                 .body("name", equalTo(null))

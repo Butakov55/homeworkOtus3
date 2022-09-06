@@ -1,14 +1,19 @@
 
+import config.SpringConfig;
 import dto.Pet;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import services.PetNewApi;
 
 import static org.hamcrest.Matchers.equalTo;
 
-@Component
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {SpringConfig.class})
 public class GetPetId {
     /*
         кейс: получить данные по корректному id питомца
@@ -26,11 +31,10 @@ public class GetPetId {
                 .status("available")
                 .build();
 
-        PetNewApi petApi = new PetNewApi();
-        petApi.createPet(pet);
+        petNewApi.createPet(pet);
 
         //проверяем данные по созданному питомцу
-        petApi.getPetId("165")
+        petNewApi.getPetId("165")
                 .statusCode(200)
                 .body("id", equalTo(165))
                 .body("name", equalTo("elza"))
@@ -43,9 +47,7 @@ public class GetPetId {
      */
     @Test
     public void getPetByNotCorrectId(){
-        PetNewApi petApi = new PetNewApi();
-
-        petApi.getPetId("165000000")
+        petNewApi.getPetId("165000000")
                 .statusCode(404)
                 .body("code", equalTo(1))
                 .body("type", equalTo("error"))
